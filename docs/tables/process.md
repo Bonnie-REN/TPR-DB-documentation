@@ -3,7 +3,8 @@ icon: lucide/clock-8
 ---
 
 # Process Features
-Process features capture the cognitive and behavioral dynamics of translation as they unfold in real time. In the context of the TPR-DB 3.0, they comprise keystroke logging measures — such as production pauses and typing bursts — and gaze metrics derived from eye-tracking, including fixation durations, regressive eye movements, and re-reading behavior.
+Process features capture the cognitive and behavioral dynamics of action (e.g., translation) as they unfold in real time. In the context of the TPR-DB 3.0, they comprise keystroke logging measures — such as production pauses and typing bursts, etc. — and gaze metrics derived from eye-tracking, including fixation durations, regressive eye movements, and re-reading behavior. 
+Many features are described in the context of the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view). In this section we present new features or if the definition has changed.
 
 ## Translation Phases
 According to Jakobsen (2011) translation sessions can be separated into an orientation phase (O), a drafting phase (D) and a revision phase (R). Drafting starts with the first keystroke and the time before is defined as the orientation phase. We adopt this definition, even though it may not always be entirely correct. Some translators actually start with testing the keyboard, by typing some characters, and then start the actual orientation phase. We will ignore these cases. According to Jakobsen, drafting ends when the last word has been typed. We operationalize this definitionas follows: 
@@ -15,11 +16,71 @@ According to Jakobsen (2011) translation sessions can be separated into an orien
 
 ## Keystroke Features
 
+### Pause Measures
+
+Lacruz and colleagues[^lacruz] introduce several measures to compute the relation between text production (i.e., sequences of fluent typing) and pausing, assuming that keystroke pauses are a "good indicators of cognitive demand in monolingual language production and in translation." 
+They suggest  measures, such as *Pause Ratio*, *Average Pause Ratio*,  *Pause to Word Ratio*, all of which
+rely on the notion $\mathtt{pause}$, and the definition of how long the *pause* ought to be. 
+
+
+$$PWR = \frac{number of pauses}{number of words}$$
+
+$$APR = \frac{average time per pauses}{average time per word}$$
+
+
+The TPR-DB provides these measures on the segment level (SG) 
+
+- `Dur` : production duration for a segment; duration between the first and the last keystroke.
+- `Nedit`: number of times the segment was edited.
+- `PreGap` : segment initial keystroke pause; lag between the last keystroke of the previous segment (or beginning of session) and the first keystoke of the current segment.
+- `PostGap` : segment final keystroke pause; lag between the last keystroke of the current segment and the first keystoke of the next segment (or end of session).
+- `TB`$\mathtt{pause}$: number of typing bursts given the $\mathtt{pause}$ threshold.
+- `TG`$\mathtt{pause}$: total duration of pausing (gap) time given the $\mathtt{pause}$ threshold.
+- `TD`<pause> : total duration of drafting time given the $\mathtt{pause}$ threshold.
+
+
+`Dur` = `TB` + `TG`
+
+It may be possible to edit a segment several times. The features provide the sum of sum if a segment is edited several times, the 
+
+Note that the typing pause preceeding the typing events in a segment are not included in `Dur`. 
+Note also that the `PostGap` value of a segment may be different from `PreGap` of the next segment, if one of the segments was edited more than once.
+
+$$ `PR300` = frac{(PreGap + TG } {(Dur +1)} $$
+
+
+
+[^lacruz]:
+    - Lacruz et al. (2012): https://aclanthology.org/2012.amta-wptp.3.pdf
+    - Lacruz et al. (2014): https://aclanthology.org/2014.amta-wptp.6.pdf
+    - Lacruz et al. (2015): https://research-api.cbs.dk/ws/portalfiles/portal/58771005/Michael_Cral_2016_01.pdf
+
+
+### Typing Inefficiency (InEff)
+We adopt the definition of InEff from [TPR-DB version 2.0, p.26](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view), who define typing (in) efficiency for a word, chunk or segment as:
+
+$$ InEff = \frac{number of typed characters}{length of final translation} $$
+
+They approximate this in terms of number of insertions and deletions:
+ 
+$$ InEff = \frac{insertions + deletions}{insertions - deletions - 1} $$
+
+A number 1 is added to the denominator to prevent division by 0, for instance in case of postediting when a word or segment remains unchanged.  In the current version we also add 1 to the nominator, so that if no deletions are recorded, the metric will return 1 irrespectively of how many deletions occurred.
+
+$$ InEff = \frac{insertions + deletions}{insertions - deletions - 1} $$
+
+Note that this measure only applies if number of insertions >= number of deletions which ensures that the result >= 1. Otherwise, if there are more deletions than insertions, as might be the case in post-editing, InEff is computed as follows, which provides a number between 0 and 1:
+
+$$ InEff = \frac{1}{deletions} $$
+
+
 ## Gaze Features
+
+Fixations are the basic processing units of gaze data. Depending on the sample rate of the eyetracken, fixations aggregate several to many gaze sample points into one unit. Fixations can be quantified based on their position on the screen (X/Y coordinates), duration, and the character/word/image looked. But a fixation itself is a dynamic event that changes in time with respect to the gaze position (micro saccades) and the pupil size. 
 
 ### Pupillometry
 
-Pupillometry is the measurement of pupil size and its dynamic changes over time. While the pupil's primary function is the regulation of light intake, it also responds to cognitive and emotional states, which modulates arousal and mental effort. This makes pupil dilation a sensitive, non-invasive proxy for cognitive load.
+Pupil measures are a new feature in the TPR-DB 3.0. Pupillometry is the measurement of pupil size and its dynamic changes over time. While the pupil's primary function is the regulation of light intake, it also responds to cognitive and emotional states, which modulates arousal and mental effort. This makes pupil dilation a sensitive, non-invasive proxy for cognitive load.
 
 #### The Basic Principle
 
@@ -42,7 +103,7 @@ Expertise differences — professional translators tend to show more efficient (
 
 #### Pupillometric Measures in the TPR-DB
 
-Pupil measures are a new feature in the TPR-DB 3.0. Given the heterogeneous nature of the TPR-DB (different eyetrackers, lighting conditions, sampling rates, etc.) the pupillometric measures are based on change in pupil diameter relative to the median pupil size in each session. 
+Given the heterogeneous nature of the TPR-DB (different eyetrackers, lighting conditions, sampling rates, etc.) the pupillometric measures are based on change in pupil diameter relative to the median pupil size in each session. 
 For each gaze sample (depending on the eyetracker sampling rate) the TPR-DB proceeds in several steps:
 
 1. Average pupil diameter across both eyes for binocular gaze sample data   
@@ -54,7 +115,7 @@ For each gaze sample (depending on the eyetracker sampling rate) the TPR-DB proc
 
 Since the pupil size and their changes is specific to every participant, a normalization is required. To address this issue, the TPR-DB computes pupil size baseline as the median pupil diameter for every translation session.
 
-For each gaze sample point $`SP`$, TPR-DB 3.0 computes an effective pupil size $`SP_p`$ as the mean of the left and right pupil diameters when both are available (i.e., diameter $> 0$) for binocular tracking, and otherwise falls back to the available monocular diameter. Each $SP_p$ is then normalised by the session median. In addition, TPR-DB 3.0 computes two measures of dispersion per participant session: a robust median absolute deviation and a standard deviation
+For each gaze sample point $SP$, the TPR-DB 3.0 computes an effective pupil size $SP_p$ as the mean of the left and right pupil diameters when both are available (i.e., diameter $> 0$) for binocular tracking, and otherwise falls back to the available monocular diameter. Each $SP_p$ is then normalised by the session median. In addition, TPR-DB 3.0 computes two measures of dispersion per participant session: a robust median absolute deviation and a standard deviation
 
 - $\mathtt{baseline}  = median(SP_{p})$
 - $\mathtt{pupil\_mad} = median(abs(SP_{p} -  \mathtt{baseline}))$
@@ -64,25 +125,29 @@ An $SP$ can be said to be in a dilated or constricted state relative to the $\ma
 
 The TPR-DB then computes three sample-level measures 1. percent of change `per` from the baseline, 2. a median-centred z-score `z` and  3. a mean robust z-score `mad`:
 
-1. `per`: $SP_{\mathtt{per}} = 100 * (SP_{AVG} - \mathtt{baseline}) / \mathtt{baseline}$
-2. `z`: $SP_{\mathtt{z}} = (SP_{AVG} -  \mathtt{baseline}) /  \mathtt{pupil\_std}$
-3. `mad`: $SP_{\mathtt{mad}} = (SP_{AVG} -  \mathtt{baseline}) /  \mathtt{pupil\_mad}$ 
+1. `per`: $SP_{\mathtt{per}} = 100 * \frac{SP_{AVG} - \mathtt{baseline}}{\mathtt{baseline}}$
+2. `z`: $SP_{\mathtt{z}} = \frac{SP_{AVG} -  \mathtt{baseline}}{\mathtt{pupil\_std}}$
+3. `mad`: $SP_{\mathtt{mad}} = \frac{SP_{AVG} -  \mathtt{baseline}}{\mathtt{pupil\_mad}}$
 
 For each of the three measures `[per|z|mad]` the TPR-DB produces the following eight commonly used measures in pupillometry research, for each fixation in the FD tables:
 
 | Description | Features in the FD table |
 |------|---------| 
-| max. pupil size, 95th percentile (peak)| `PUP_[per\|mad\|z]_max`|
-| min. pupil size, 5th percentile (floor) | `PUP_[per\|mad\|z]_min`|
-| mean pupil size | `PUP_[per\|mad\|z]_mean`|
-| standard deviation (SD) | `PUP_[per\|mad\|z]_mean`|
-| Area Under the Curve (AUC) |   `PUP_[per\|mad\|z]_AUC`|
-| time-normalized AUC |   `PUP_[per\|mad\|z]_AUC_N`|
-| time-normalized AUC for constriction |   `PUP_[per\|mad\|z]_AUC_C`|
-| time-normalized AUC for dilation |   `PUP_[per\|mad\|z]_AUC_D`|
+| max. pupil size, 95th percentile (peak)| `PUP_[per|mad|z]_max`|
+| min. pupil size, 5th percentile (floor) | `PUP_[per|mad|z]_min`|
+| mean pupil size | `PUP_[per|mad|z]_mean`|
+| standard deviation (SD) | `PUP_[per|mad|z]_mean`|
+| Area Under the Curve (AUC) |   `PUP_[per|mad|z]_AUC`|
+| time-normalized AUC |   `PUP_[per|mad|z]_AUC_N`|
+| time-normalized AUC for constriction |   `PUP_[per|mad|z]_AUC_C`|
+| time-normalized AUC for dilation |   `PUP_[per|mad|z]_AUC_D`|
 
 
 *[AUC]: Area Under the Curve: cumulative dilation over a time window
 *[SD]: standard deviation: 
+*[TPR-DB]: Translation Process Research Database
 *[TPR]: Translation Process Research
+*[TT]: target text (i.e., translation)
+*[ST]: source text 
+
 
