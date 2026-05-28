@@ -3,26 +3,26 @@ icon: lucide/clock-8
 ---
 
 # Process Features
-Process features capture the cognitive and behavioral dynamics of action (e.g., translation) as they unfold in real time. In the context of the TPR-DB 3.0, they comprise keystroke logging measures — such as production pauses and typing bursts, etc. — and gaze metrics derived from eye-tracking, including fixation durations, regressive eye movements, and re-reading behavior. 
-Many features are described in the context of the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view). This section focuses on new features or features for which the definition has changed.
+Process features capture the cognitive and behavioral dynamics of action (e.g., translation) as they unfold in time. In the context of the TPR-DB 3.0, they comprise keystroke logging measures — such as production pauses and typing bursts — and gaze metrics derived from eye-tracking, including fixation durations, regressive eye movements, and re-reading behavior. 
+Many of those features are described in the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view). This section therefore, focuses on new features or features for which the definition has changed.
 
 
 ## Keystroke Features
 
-The features `Ins`, `Del`, `FixS`, `FixT` ... have not changed, althought due to a redefinition of word boundaries and the reimplementation in Python their values may be silightly different. Some changes ha
+The definitions of many features, such as `Dur`, `Ins`, `Del`, `FixS`, `FixT` ... have not changed, althought - due to a redefinition of word boundaries and the reimplementation in Python along with changes of the algorithm - their values may be silightly different. In addition, some features are now differently defined. 
 
 ### Typing Inefficiency (InEff)
 We adopt the definition of InEff from [TPR-DB version 2.0, p.26](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view), who define typing (in) efficiency for a word, chunk or segment as:
 
-$$ \text{InEff} = \frac{\text{number of typed characters}}{\text{length of final translation}} $$
+$$ InEff = \frac{\text{number of typed characters}}{\text{length of final translation}} $$
 
 They approximate this in terms of number of insertions and deletions:
  
-$$ \text{InEff} = \frac{\text{insertions} + \text{deletions}}{\text{insertions - deletions} - 1} $$
+$$ InEff = \frac{\text{insertions} + \text{deletions}}{\text{insertions - deletions} - 1} $$
 
 A number 1 is added to the denominator to prevent division by 0, for instance in case of postediting when a word or segment remains unchanged.  In the current version we also add 1 to the nominator, so that if no deletions are recorded, the metric will return 1 irrespectively of how many deletions occurred.
 
-$$ InEff = \frac{insertions + deletions}{insertions - deletions - 1} $$
+$$ InEff = \frac{insertions + deletions + 1}{insertions - deletions - 1} $$
 
 Note that this measure only applies if number of insertions >= number of deletions which ensures that the result >= 1. Otherwise, if there are more deletions than insertions, as might be the case in post-editing, InEff is computed as follows, which provides a number between 0 and 1:
 
@@ -35,23 +35,24 @@ All their metrics, including *Pause Ratio* (PR), *Average Pause Ratio* (APR),  *
 
 - pause ratio (PR) 
 
-   $\text{PR} =\frac{\text{total pause time in segment}}{\text{total time in segment}}$
+   $$PR =\frac{\text{total pause time in segment}}{\text{total time in segment}}$$
     
 - average pause ratio (APR)
 
-    $ \text{APR} =\frac{\text{average time per pause}}{\text{average time per words}}$
+    $$APR =\frac{\text{average time per pause}}{\text{average time per words}}$$
     
 
 - pause to word ratio (PWR) 
 
-    $ \text{PWR} =\frac{\text{number of pauses in segment}}{\text{number of words in segment}}$
+    $$PWR =\frac{\text{number of pauses in segment}}{\text{number of words in segment}}$$
 
-All these metrics rely on a notion of $\mathtt{pause}$, which has been a topic of discussion and controversy for many years. The TPR-DB provides basic features for computing pause metrics on the segment level (SG). In line with the literature, the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view) presumed $\mathtt{pause}$ thresholds of $500ms$ $1000ms$, $2000ms$ and $5000ms$. 
+The TPR-DB provides basic features for computing pause metrics on the segment level (SG). 
+However, these metrics rely on a notion of $\mathtt{pause}$, which has been a topic of discussion and controversy for many years. 
+In line with the literature, the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view) presumed $\mathtt{pause}$ thresholds of $500ms$ $1000ms$, $2000ms$ and $5000ms$. 
 
-Since pausing behavior in the TPR-DB 3.0 is assumed to be traslator-specific, the $\mathtt{pause}$ thresholds are now also based on the translator-specific values of `KUI` and `PUB` and include $1000ms$ `KUI`, `PUB`, $2 \times `PUB`$ and $4 \times `PUB`$. 
+Since pausing behavior in the TPR-DB 3.0 is assumed to be translator-specific, the $\mathtt{pause}$ thresholds are now also based on the translator-specific values of `KUI` and `PUB` and include $1000ms$ `KUI`, `PUB`, $2 \times$ `PUB` and $4 \times$ `PUB`. 
 
 The following features on the SG level are involved in the TPR-DB Pause Metrics:
-
 
 - `Dur` : production duration for a segment; duration between the first and the last keystroke.
 - `Nedit`: number of times the segment was edited.
@@ -66,13 +67,13 @@ Depending on the definition, if the `PostGap` is taken to be pause in the segmen
 
 Based on these considerations, it is possible to compute pause metrics as:
 
-$$ \text{`PR`} = \frac{\text{`PreGap` + `TG` } {\test{Dur} +1} $$
+$$ \text{PR} = \frac{\text{PreGap + TG} {\text{Dur} +1} $$
 
-$$ \text{PWR}_S = \frac{TB} {\test{`TokS`}} $$
+$$ \text{PWR}_S = \frac{TB} {\text{`TokS`}} $$
 
-$$ \text{PWR}_T = \frac{TB} {\test{`TokT`}} $$
+$$ \text{PWR}_T = \frac{TB} {\text{`TokT`}} $$
 
-$$ \text{APR} = \frac{TG}{TB} / \frac{TD}/{\test{`TokT`}} = \frac{TG * TokT}{TB * TD} $$
+$$ \text{APR} = \frac{TG}{TB} / \frac{TD}/{\text{`TokT`}} = \frac{TG * TokT}{TB * TD} $$
 
 
 [^lacruz]:
