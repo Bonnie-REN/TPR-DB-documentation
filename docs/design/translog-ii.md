@@ -1,6 +1,9 @@
 ---
 icon: lucide/keyboard
+title: Translog-II
+description: How to use Translog-II to set up and conduct translation process research sessions.
 ---
+
 # Conducting Keylogging Experiments with Translog-II
 
 This guide provides a step-by-step walkthrough for using Translog-II to conduct a basic keylogging experiment. It covers the complete workflow — from project configuration to data collection — using an English-to-Chinese translation-from-scratch task as a worked example.
