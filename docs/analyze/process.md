@@ -50,17 +50,21 @@ Lacruz and colleagues[^lacruz] introduce several metrics to quantify the relatio
 Their metrics include, among others:
 
 - **Pause Ratio (PR):** the proportion of segment time spent pausing.
+
+
 $PR = \frac{\text{total pausing duration in segment}}{\text{total time spent in segment}}$
 
 - **Average Pause Ratio (APR):** the average pause duration relative to the average word duration.
+
 $APR = \frac{\text{average time per pause}}{\text{average time per word}}$
 
 - **Pause-to-Word Ratio (PWR):** the number of pauses relative to the number of words in a segment.
+
 $PWR = \frac{\text{number of pauses in segment}}{\text{number of words in segment}}$
 
 The TPR-DB provides basic features for computing these and other pause metrics at the segment level (SG).
 
-The pause metrics rely on a notion of *pause*, which has been the subject of debate for many years. Following the literature, [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view) used fixed `Pause` thresholds of 500ms, 1000ms, 2000ms, and 5000ms. In TPR-DB 3.0, pausing behavior is instead treated as translator-specific, so thresholds are now also based on the translator-specific values `KUI` and `PUB`: 1000ms, `KUI`, `PUB`.
+The pause metrics rely on a notion of *pause*, which has been the subject of debate for many years. Following the literature, [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view) used fixed `Pause` thresholds of 500ms, 1000ms, 2000ms, and 5000ms. In TPR-DB 3.0, pausing behavior is instead treated as translator-specific, so thresholds are now also based on the translator-specific values `KUI` and `PUB`.
 
 The following segment-level features are used in the TPR-DB pause metrics:
 
@@ -72,7 +76,7 @@ The following segment-level features are used in the TPR-DB pause metrics:
 - `TG`<sub>pause</sub>: the total duration of pausing (gap) time, given a pause threshold.
 - `TD`<sub>pause</sub>: the total duration of drafting time, given a pause threshold.
 
-Note that for any value of the pause threshold: `Dur` = `TB`<sub>pause</sub> + `TG`<sub>pause</sub>. That is, 1) neither the pause preceding the typing events in a segment nor the pause following them is included in `Dur` and 2) depending on the duration of the pause, more share `TB` and less the . Note also that a segment may be edited multiple times; in that case, the relevant features are summed across edits. This means a segment's `PostGap` may differ from the next segment's `PreGap`, if either segment was edited more than once.
+Note that for any pause threshold value, `Dur` = `TD`<sub>pause</sub> + `TG`<sub>pause</sub>. That is, 1) neither the `PreGap` preceding the typing events in a segment nor the `PostGap` following them is included in `Dur` and 2) depending on the duration of the pause threshold, the total duration is distributed differently `TD`<sub>pause</sub> and `TG`<sub>pause</sub>: longer thresholds increase the total drafting duration and proportinally shorten the total pauseing duration. Note also that a segment may be edited multiple times; in that case, the relevant features are summed across edits. This means a segment's `PostGap` may differ from the next segment's `PreGap`, if either segment was edited more than once.
 
 Depending on the definition adopted, if `PostGap` is counted as a pause within the segment, the number of pauses equals the number of typing bursts (`TB`) plus one; otherwise, the number of pauses is simply equal to `TB`.
 
@@ -80,9 +84,9 @@ Based on these considerations, the pause metrics can be computed as follows:
 
 $$PR_{\text{pause}} = \frac{\text{PreGap} + TG_{\text{pause}}}{\text{Dur} + 1}$$
 
-$PWR_S_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokS}}$
+$PWR\_S_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokS}}$
 
-$PWR_T_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokT}}$
+$PWR\_T_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokT}}$
 
 $$APR = \frac{TG / TB}{TD / \text{TokT}} = \frac{TG \times \text{TokT}}{TB \times TD}$$
 
@@ -92,10 +96,6 @@ These equations are also part of the [CRITT academy](XXXX) and are explained the
     - Lacruz et al. (2012): https://aclanthology.org/2012.amta-wptp.3.pdf
     - Lacruz et al. (2014): https://aclanthology.org/2014.amta-wptp.6.pdf
     - Lacruz et al. (2015): https://research-api.cbs.dk/ws/portalfiles/portal/58771005/Michael_Cral_2016_01.pdf
-
-
-/////////////////////////////////
-
 
 
 ## Typing Inefficiency (InEff)
