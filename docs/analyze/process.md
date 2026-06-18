@@ -52,15 +52,15 @@ Their metrics include, among others:
 - **Pause Ratio (PR):** the proportion of segment time spent pausing.
 
 
-$\mathtt{PR} = \frac{\text{total pausing duration in segment}}{\text{total time spent in segment}}$
+$$\mathtt{PR} = \frac{\text{total pausing duration in segment}}{\text{total time spent in segment}}$$
 
-- **Average Pause Ratio (APR):** the average pause duration relative to the average word duration.
+- **Average Pause Ratio (APR):** the average duration per pause relative to the average word duration.
 
-$\mathtt{APR} = \frac{\text{average time per pause}}{\text{average time per word}}$
+$$\mathtt{APR} = \frac{\text{average time per pause}}{\text{average time per word}}$$
 
 - **Pause-to-Word Ratio (PWR):** the number of pauses relative to the number of words in a segment.
 
-$\mathtt{PWR} = \frac{\text{number of pauses in segment}}{\text{number of words in segment}}$
+$$\mathtt{PWR} = \frac{\text{number of pauses in segment}}{\text{number of words in segment}}$$
 
 The TPR-DB provides basic features for computing these and other pause metrics at the segment level (SG).
 
@@ -73,8 +73,8 @@ The following segment-level features are used in the TPR-DB pause metrics:
 - `PreGap`: the segment-initial keystroke pause — the lag between the last keystroke of the previous segment (or the start of the session) and the first keystroke of the current segment.
 - `PostGap`: the segment-final keystroke pause — the lag between the last keystroke of the current segment and the first keystroke of the next segment (or the end of the session).
 - `TB`<sub>pause</sub>: the number of typing bursts, given a pause threshold.
-- `TG`<sub>pause</sub>: the total duration of pausing (gap) time, given a pause threshold.
-- `TD`<sub>pause</sub>: the total duration of drafting time, given a pause threshold.
+- `TD`<sub>pause</sub>: the total duration in typing bursts, given a pause threshold.
+- `TG`<sub>pause</sub>: the total pausing duration, i.e., the gap between bursts, given a pause threshold.
 
 Note that for any pause threshold value, `Dur` = `TD`<sub>pause</sub> + `TG`<sub>pause</sub>. That is, 1) neither the `PreGap` preceding the typing events in a segment nor the `PostGap` following them is included in `Dur` and 2) depending on the duration of the pause threshold, the total duration is distributed differently `TD`<sub>pause</sub> and `TG`<sub>pause</sub>: longer thresholds increase the total drafting duration and proportinally shorten the total pauseing duration. Note also that a segment may be edited multiple times; in that case, the relevant features are summed across edits. This means a segment's `PostGap` may differ from the next segment's `PreGap`, if either segment was edited more than once.
 
@@ -84,9 +84,9 @@ Based on these considerations, the pause metrics can be computed as follows:
 
 $$\mathtt{PR}_{\text{pause}} = \frac{\text{PreGap} + TG_{\text{pause}}}{\text{Dur} + 1}$$
 
-$$\mathtt{PWR}\_S_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokS}}$$
+$$\mathtt{PWR_S}_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokS}}$$
 
-$$\mathtt{PWR}\_T_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokT}}$$
+$$\mathtt{PWR_T}_{\text{pause}} = \frac{TB_{\text{pause}}}{\text{TokT}}$$
 
 $$\mathtt{APR}_{\text{pause}}  = \frac{TG_{\text{pause}}  / TB_{\text{pause}} }{TD_{\text{pause}}  / \text{TokT}} = \frac{TG_{\text{pause}}  \times \text{TokT}}{TB_{\text{pause}}  \times TD_{\text{pause}} }$$
 
@@ -99,7 +99,7 @@ These equations are also part of the [CRITT academy](#CRITT Academy) and are exp
 
 
 ## Typing Inefficiency (InEff)
-We adopt the definition of InEff from [TPR-DB version 2.0, p.26](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view), who define typing (in) efficiency for a word, chunk or segment as:
+We adopt the definition of InEff from [TPR-DB version 2.0, p.26](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view), who define typing (in)efficiency for a word, chunk or segment as:
 
 $$ \mathtt{InEff} = \frac{\text{number of typed characters}}{\text{length of final translation}} $$
 
@@ -217,11 +217,17 @@ Level 1 measures capture what happens at one specific location, in isolation fro
 
 These metrics have been the in the main focus of research and are documented in the [TPR-DB version 2.0](https://drive.google.com/file/d/1FgOSNcpbjlxdo6MM_jf3Pw5wDS6S9-BB/view) an are FD and FU tables. 
 
-Level 1 metrics include :
-- First fixation duration `FFD`,
-- Total reading times on the ST word `TrtS`, or on the target word `TrtT`
-- Number of fixations  `FixS`, `FixT`
-- 
+Level 1 metrics include:
+
+- Time offset (in ms) of first fixation on the source token `FFtimeS` and on the target token`FFtimeT`
+- First fixation duration on the source token `FFDurS`, and on the target token `FFDurT`
+- Total number of fixations the source token  `FixS` and the trget token  `FixT`
+- Total fixation duration (reading time) of the source token `TrtS`, or on the target token `TrtT`
+- Fixation duration (reading time) in the orientation phase of the source token `OrtS` and target token `OrtT`
+- Fixation duration (reading time) during first micro unit 1 (`MU1`) of the source token `MU1rtS` and target token `MU1rtT`
+
+
+
 ### Level 2 — Transitions between words 
 Level 2 measures capture how the eye moves between words. The unit of analysis is the fixation behavior on a word in relation to the neighboring words:
 
@@ -236,33 +242,32 @@ Level 2 measures capture how the eye moves between words. The unit of analysis i
 #### Fixation transitions measures in the TPR-DB
 
 Level 2 metrics include: 
-- first fixation duration `FFD`,
-- Total reading times on the ST word `TrtS`, or on the target word `TrtT`
-- Number of fixations  `FixS`, `FixT` 
+
+- TO BE COMPLETED
 
 
-### Level 3 — Local reading strategy, gaze path measures
+### Level 3 — gaze path measures and local reading strategies 
 These measures describe the local reading strategy. The unit of analysis is a sequence of fixations and how the eyes move sequentially. 
 
 - Linear reading: sequential, left-to-right, top-to-bottom progression
 - Scattered fixations: non-sequential, exploratory, attention-driven
 - Regressions / refixations — backward movements, indicating comprehension difficulty or verification
-- **Scan path similarity** — comparing one participant's path to another or to an ideal (e.g., Levenshtein distance on AOI sequences)
-- **Coverage / revisit rate** — what proportion of AOIs were visited, and how often
-- **Reading order deviation** — how much the actual sequence departs from canonical order
+- Scan path similarity — comparing one participant's path to another or to an ideal (e.g., Levenshtein distance on AOI sequences)
+- Coverage / revisit rate — what proportion of AOIs were visited, and how often
+- Reading order deviation — how much the actual sequence departs from canonical order
 
-#### Level 3: Gaze Patterns
+#### Gaze patterns in the TPR-DB
 
+While *Fixation transitions measures* capture transitions to and from a word (a static AOI, e.g., a chunk or segment) *Local reading strategies* describe sequences of gaze patterns. These gaze patterns may occur on the source text or on the target text. As soon as the eyes switch the window, a new pattern starts. We make a distinction between three types of gaze patterns:
 
-`Dur_L`
-`Dur_R`
-`Dur_S`
-`Dur_N`
-`RelDur_L`
-`RelDur_R`
-`RelDur_S`
-`RelDur_N`
+1. Linear reading: sequences of mainly progressive fixations indicating successive reading, i.e., input of new information. 
+2. Refixation/regressive reading: sequences of fixations on the same or on neighboring words, indicating indicating difficulties, i.e., input of new information. 
+3. Scattered gaze patterns: neither linear nor 
+4. No gaze detected: while this is not a gazing pattern
 
+Each fixation in the FD table is tagged with a label `L`, `R`, or `S` depending whether the fixation is part of a linear, refixation or scattered gaze pattern. AU tables provide features `Dur_L`, `Dur_R`,or `Dur_S`, which indicate the sum of the fixation durations part of the three patterns, or `Dur_N` for the duration in which no gaze data was collected. The features `RelDur_L`, `RelDur_R`, `RelDur_S`, `RelDur_N` provide the proportion of the and are computed as:
+
+$RelDur_{\text{<sub>label</sub>}} = \frac{Dur_{\text{<sub>label</sub>}}}{Dur}$
 
 
 ### Level 4 — Global gaze behavior
@@ -272,7 +277,9 @@ Above the local gaze path level, aggregating across multiple trials or participa
 - Cluster-based reader types (skimmer vs. careful reader)
 - Learning effects across trials
 
+#### Global gaze behavior in the TPR-DB
 
+as of now there are no such measures in the TPR-DB
 
 ## Translation Phases
 According to Jakobsen (2011) translation sessions can be separated into an orientation phase (O), a drafting phase (D) and a revision phase (R). Drafting starts with the first keystroke and the time before is defined as the orientation phase. We adopt this definition, even though it may not always be entirely correct. Some translators actually start with testing the keyboard, by typing some characters, and then start the actual orientation phase. We will ignore these cases. According to Jakobsen, drafting ends when the last word has been typed. We operationalize this definitionas follows: 
