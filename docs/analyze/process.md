@@ -190,9 +190,9 @@ An $SP$ can be said to be in a dilated or constricted state relative to the $\ma
 
 The TPR-DB then computes three sample-level measures 1. percent of change `per` from the baseline, 2. a median-centred z-score `z` and  3. a mean robust z-score `mad`:
 
-1. `per`: $SP_{\text{per}} = 100 \times \frac{SP_{\text{avg}} - \mathtt{baseline}}{\mathtt{baseline}}$
-2. `z`: $SP_{\text{z}} = \frac{SP_{\text{avg}} - \mathtt{baseline}}{\mathtt{pupil\_std}}$
-3. `mad`: $SP_{\text{mad}} = \frac{SP_{\text{avg}} - \mathtt{baseline}}{\mathtt{pupil\_mad}}$
+1. `per`: $SP_{\text{per}} = 100 \times \frac{SP_{\text{p}} - \mathtt{baseline}}{\mathtt{baseline}}$
+2. `z`: $SP_{\text{z}} = \frac{SP_{\text{p}} - \mathtt{baseline}}{\mathtt{pupil\_std}}$
+3. `mad`: $SP_{\text{mad}} = \frac{SP_{\text{p}} - \mathtt{baseline}}{\mathtt{pupil\_mad}}$
 
 For each of the three measures `[per|z|mad]` the TPR-DB produces the following eight commonly used measures in pupillometry research, for each fixation in the FD tables:
 
@@ -270,7 +270,7 @@ While *Fixation transitions measures* capture transitions to and from a word (a 
 
 Each fixation in the FD table is tagged with a label `L`, `R`, or `S` depending whether the fixation is part of a linear, refixation or scattered gaze pattern. AU tables provide features `Dur_L`, `Dur_R`,or `Dur_S`, which indicate the sum of the fixation durations part of the three patterns, or `Dur_N` for the duration in which no gaze data was collected. The features `RelDur_L`, `RelDur_R`, `RelDur_S`, `RelDur_N` provide the proportion of the and are computed as:
 
-$RelDur_{\text{<sub>label</sub>}} = \frac{Dur_{\text{<sub>label</sub>}}}{Dur}$
+$\text(RelDur}_{\text{label}} = \frac{\text{Dur}_{\text{label}}}{\text{Dur}}$
 
 
 ### Level 4 — Global gaze behavior
