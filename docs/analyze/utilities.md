@@ -58,10 +58,13 @@ For demonstration purposes, we use session P01_T3 from the public study RUC17.
 
 !!! note
  
-    x-axis: time window (in milliseconds) 
-    y-axis: range of the ST and their aligned TT (in words)
-    blue dots: fixations on the source text
-    green dots: fixations on the target text
+    ·x-axis: time window (in milliseconds) 
+
+    ·y-axis: range of the ST and their aligned TT (in words)
+
+    ·blue dots: fixations on the source text
+
+    ·green dots: fixations on the target text
 
 At this stage, the graph provides a general overview of the translator's behavior. Here, the x-axis represents the entire translation duration. The translator initially reads through the ST before beginning to produce the TT. Toward the end of the translation process, fixations are primarily on the TT, suggesting that the translator is reviewing the translation.
 
@@ -75,8 +78,9 @@ For this example, the time window is set to 540,000–650,000 ms and the ST rang
 
 !!! note
 
-    black characters: insertions
-    red characters: deletions
+    ·black characters: insertions
+    
+    ·red characters: deletions
 
 By narrowing the time window and the ST range, the graph provides a finer-grained view of the translator's activity, showing that the translator focused on translating the words within the red boxed area, with a few deletions.
 
